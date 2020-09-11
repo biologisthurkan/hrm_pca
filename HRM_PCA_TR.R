@@ -2,12 +2,12 @@
 ###########################################################################
 ###                                                                     ###
 ###                           HRM PCA SCRIPT:                           ###
-###                      GELI�TIREN BY HAKAN DUMAN                      ###
+###                      GELIÞTIREN BY HAKAN DUMAN                      ###
 ###                          HKND1977@GMAIL.COM                         ###
-###                        D�ZENLEYEN KAAN H�RKAN                       ###
+###                        DÜZENLEYEN KAAN HÜRKAN                       ###
 ###                      KAAN.HURKAN@IGDIR.EDU.TR                       ###
-###                          I�D�R �NIVERSITESI                         ###
-###                    TAR�MSAL BIYOTEKNOLOJI B�L�M�                    ###
+###                          IGDIR ÜNIVERSITESI                         ###
+###                    TARýMSAL BIYOTEKNOLOJI BÖLÜMÜ                    ###
 ###                            5 TEMMUZ 2020                            ###
 ###                                                                     ###
 ###########################################################################
@@ -16,47 +16,47 @@
 ###########################################################################
 ###                          Gerekli Paketler                           ###
 ###########################################################################
-library(tidyverse) # veri düzenlemesi için
-library(psych) # pca için
+library(tidyverse) # veri dÃ¼zenlemesi iÃ§in
+library(psych) # pca iÃ§in
 library(plot3D) # 3d grafikler
-library(factoextra) #  clustering grafikleri için
-library(mclust) # kümeleme analizi
-#- yüklü olmayan paketler için install.packages('paket ismi') kullanılır  -
+library(factoextra) #  clustering grafikleri iÃ§in
+library(mclust) # kÃ¼meleme analizi
+#- yÃ¼klÃ¼ olmayan paketler iÃ§in install.packages('paket ismi') kullanÄ±lÄ±r  -
 
 
 ###########################################################################
-###                         Verinin yüklenmesi                          ###
+###                         Verinin yÃ¼klenmesi                          ###
 ###########################################################################
-#------------ read.csv komutuna dosya yoluyla berbaber yazılır ------------
+#------------ read.csv komutuna dosya yoluyla berbaber yazÄ±lÄ±r ------------
 veri <- read.csv(file = "data/primer12.csv",header = TRUE)
-#---------- verisetinin yapısal durumu için str komutu kullanılır ---------
+#---------- verisetinin yapÄ±sal durumu iÃ§in str komutu kullanÄ±lÄ±r ---------
 str(veri)
 bagimliDegisken <- veri[,1]
 
 ###########################################################################
-###                            Erime bölgesi                            ###
+###                            Erime bÃ¶lgesi                            ###
 ###########################################################################
-maxLim <- 80.85 #üst limit
+maxLim <- 80.85 #Ã¼st limit
 minLim <- 76.86 #alt limit
-#---------------------------- Filtreleme işlemi ---------------------------
+#---------------------------- Filtreleme iÅŸlemi ---------------------------
 normveri  <- as_tibble(veri) %>% 
   filter(Temperature<maxLim,Temperature>minLim)
 
 ###########################################################################
-###                 Her bir Değişkeni Yüzdeliğe çevirme                 ###
+###                 Her bir DeÄŸiÅŸkeni YÃ¼zdeliÄŸe Ã§evirme                 ###
 ###########################################################################
-#---- apply verilen fonksiyonu bütün satırtlara veya sütunlara uygular ----
-#------------ eğer 2. parametre 1 ise satırlar,  2 ise sütunlar -----------
+#---- apply verilen fonksiyonu bÃ¼tÃ¼n satÄ±rtlara veya sÃ¼tunlara uygular ----
+#------------ eÄŸer 2. parametre 1 ise satÄ±rlar,  2 ise sÃ¼tunlar -----------
 normveri <- apply(normveri[,-1],2,function(x) x/max(x))
 
 
 ###########################################################################
-###                            Medyan eğrisi                            ###
+###                            Medyan eÄŸrisi                            ###
 ###########################################################################
 medcurve <- apply(normveri, 1, median)
 
 ###########################################################################
-###Medyan eğrileri yardımıyla yüzde erime eğirisinin normalleştirilmesi ###
+###Medyan eÄŸrileri yardÄ±mÄ±yla yÃ¼zde erime eÄŸirisinin normalleÅŸtirilmesi ###
 ###########################################################################
 for(i in 1:ncol(normveri)){
   normveri[,i]=normveri[,i]-medcurve}
@@ -67,36 +67,36 @@ head(normveri)
 ###########################################################################
 fitPCA <-prcomp(normveri, scale = FALSE) 
 plot(fitPCA, type="line",  main="PCs of HRM") # Pareto plot
-#-------- anlamlı olan PC 1:3 olarak seçilip yeni veri oluşturuldu --------
+#-------- anlamlÄ± olan PC 1:3 olarak seÃ§ilip yeni veri oluÅŸturuldu --------
 veriPCA <- as.data.frame(fitPCA$rotation[,1:3])
 
 ###########################################################################
-###                              Kümeleme                               ###
+###                              KÃ¼meleme                               ###
 ###########################################################################
 fitCluster <- Mclust(veriPCA)
-#---------------------------- En iyi model adı ----------------------------
+#---------------------------- En iyi model adÄ± ----------------------------
 fitCluster$modelName
-#-------------------------- En uygun küme sayısı --------------------------
+#-------------------------- En uygun kÃ¼me sayÄ±sÄ± --------------------------
 fitCluster$G
-#--------------------- Küme olasılıkları(ilk 6 satır) ---------------------
+#--------------------- KÃ¼me olasÄ±lÄ±klarÄ±(ilk 6 satÄ±r) ---------------------
 head(fitCluster$z)
-#-------------------------------- Kümeler ---------------------------------
+#-------------------------------- KÃ¼meler ---------------------------------
 fitCluster$classification
 
 ###########################################################################
-###                         Kümeleme Görselleri                         ###
+###                         KÃ¼meleme GÃ¶rselleri                         ###
 ###########################################################################
 
-#--- BIC'ye göre en uygun küme sayısının belirlenmesini gösteren grafik ---
+#--- BIC'ye gÃ¶re en uygun kÃ¼me sayÄ±sÄ±nÄ±n belirlenmesini gÃ¶steren grafik ---
 fviz_mclust(fitCluster, "BIC", palette = "jco") 
-#---------------------------- Kümeleme Grafiği ----------------------------
+#---------------------------- KÃ¼meleme GrafiÄŸi ----------------------------
 fviz_mclust(fitCluster, 
             "classification", 
             geom = "point", 
             ellipse.type = "t",
             pointsize = 1.5, 
             palette = "jco") 
-#-------------------------- uncertainty grafiği ---------------------------
+#-------------------------- uncertainty grafiÄŸi ---------------------------
 fviz_mclust(fitCluster, 
             "uncertainty", 
             palette = "jco")
@@ -128,9 +128,9 @@ points3D(x=veriPCA$PC1,y=veriPCA$PC2,z=veriPCA$PC3,
 identify(veriPCA[,1:3], labels = rownames(veriPCA))
 
 ###########################################################################
-###                   Grafiklerin dışarı aktarılması                    ###
+###                   Grafiklerin dÄ±ÅŸarÄ± aktarÄ±lmasÄ±                    ###
 ###########################################################################
-#------ pdf yerine jpeg,png gibi farklı dosya türleride seçilebilir -------
+#------ pdf yerine jpeg,png gibi farklÄ± dosya tÃ¼rleride seÃ§ilebilir -------
 pdf("PC1 vs PC2.pdf")
 plot(veriPCA[,1:2], bg=fitCluster$classification,
      pch=21,xlab='PC1', ylab='PC2')
@@ -155,7 +155,7 @@ points3D(x=veriPCA$PC1,y=veriPCA$PC2,z=veriPCA$PC3,
 dev.off()
 
 ###########################################################################
-###                 Kümeleme Verisinin dışarı alınması                  ###
+###                 KÃ¼meleme Verisinin dÄ±ÅŸarÄ± alÄ±nmasÄ±                  ###
 ###########################################################################
 write.csv(fitCluster$classification, 
           file = "variant call.csv", sep=" ")
