@@ -4,9 +4,9 @@
 ###                            HRM PCA SCRIPT:                           ###
 ###                       DEVELOPED BY HAKAN DUMAN                       ###
 ###                          HKND1977@GMAIL.COM                          ###
-###                        EDITED BY KAAN HÜRKAN                         ###
+###                        EDITED BY KAAN HÃœRKAN                         ###
 ###                       KAAN.HURKAN@IGDIR.EDU.TR                       ###
-###                           IÐDýR UNIVERSITY                           ###
+###                           IGDIR UNIVERSITY                           ###
 ###               DEPARTMENT OF AGRICULTURAL BIOTECHNOLOGY               ###
 ###                              5 JULY 2020                             ###
 ###                                                                      ###
